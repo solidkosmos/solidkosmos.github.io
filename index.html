@@ -470,10 +470,10 @@ repository:</strong></p>
 <li><a href="https://github.com/solidkosmos/sk-raft-client/blob/main/auxiliary_components/bram_hold_pass/README.md"><code>auxiliary_components/bram_hold_pass</code></a>:
 the problem, the hold register, the requirements and the report of the
 pass.</li>
-<li><a href="https://github.com/solidkosmos/sk-raft-client/blob/main/get_started/example4/readback_writeback/README.md">example4/readback_writeback</a>:
-shows the effect. The BRAM outputs a wrong word while the clock is
-stopped after an injection.</li>
-<li><a href="https://github.com/solidkosmos/sk-raft-client/blob/main/get_started/example4/README.md#bram-output-latch-and-the-hold-register">example4</a>:
+<li><a href="https://github.com/solidkosmos/sk-raft-client/blob/main/get_started/example6/README.md">example6</a>:
+explains why the BRAM output changes, and shows the effect. The BRAM
+outputs a wrong word while the clock is stopped after an injection.</li>
+<li><a href="https://github.com/solidkosmos/sk-raft-client/blob/main/get_started/example4/README.md#the-hold-register">example4</a>:
 a BRAM protected by the pass.</li>
 <li><a href="https://github.com/solidkosmos/sk-raft-client/blob/main/get_started/hw/create_project.tcl"><code>get_started/hw/create_project.tcl</code></a>
 (list <code>tops_with_bram_hold</code>) and <a href="https://github.com/solidkosmos/sk-raft-client/blob/main/application_examples/test_neo_hardened/create_project.tcl"><code>application_examples/test_neo_hardened/create_project.tcl</code></a>
@@ -485,8 +485,7 @@ set the pass as the hook before <code>opt_design</code>.</li>
 Guide</em>, Chapter 10, “SEU Detection and Correction” (p. 192): “Block
 RAM content is skipped during readback to avoid interfering with user
 functions.” The guide does not describe the effect on the output latch.
-The effect above comes from the measurements of
-example4/readback_writeback.</li>
+The effect above comes from the measurements of example 6.</li>
 </ul>
 <div id="GET_STARTED_EXAMPLES-index" class="page">
 
@@ -528,11 +527,10 @@ injection.</td>
 </tr>
 <tr>
 <td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/get_started/example4">Example
-4: BRAM injection</a></td>
-<td>Inject faults into the configuration bits and the content of a BRAM,
-with a Hamming SEC code for each byte. <a href="https://github.com/solidkosmos/sk-raft-client/tree/main/get_started/example4/readback_writeback"><code>readback_writeback</code></a>
-shows what the BRAM outputs during and after an injection into its
-content.</td>
+4: BRAM content injection and ECC recovery</a></td>
+<td>Inject faults into the content of a BRAM, which a Hamming SEC code
+in the fabric protects (one code for each byte). See which words read
+back wrong, and which of them the code corrects.</td>
 </tr>
 <tr>
 <td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/get_started/example5">Example
@@ -540,6 +538,15 @@ content.</td>
 <td>List the components of a design as a tree, from the flip-flop nets
 of the LL file. Then inject random upsets into the flip-flops of one
 component, with the net of each flip-flop that an upset hits.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/get_started/example6">Example
+6: the BRAM port that SK-RAFT shares with your design</a></td>
+<td>Why a BRAM needs a hold register: the design and SK-RAFT share the
+write and read paths of the BRAM. A configuration read changes the BRAM
+output while the clock is stopped, and the built-in ECC encoder makes
+new parity bits for an injected bit, so the built-in ECC does not see
+it.</td>
 </tr>
 </tbody>
 </table>
@@ -565,9 +572,14 @@ at a time. Start the SK-RAFT server: type <code>sk-raft</code> in a
 terminal, on Windows or on Linux. Keep the server running while you use
 it. If the server does not see the board, refer to the troubleshooting
 chapter of the SK-RAFT Server User Manual.</p></li>
-<li><p>Install the <code>skraft</code> Python client. It is not on PyPI.
-Install it from the repository into the virtual environment of your
-project, with the commands of your shell.</p>
+<li><p>Install the <code>skraft</code> Python client. If you installed
+SK-RAFT with its setup, your examples folder already has a virtual
+environment, <code>.venv</code>, with the client: open a terminal with
+<code>get_started\open_terminal.bat</code> (Windows) or
+<code>sh get_started/open_terminal.sh</code> (Linux), and go to step 3.
+The client is not on PyPI. To use a clone of the repository, install the
+client into the virtual environment of your project, with the commands
+of your shell.</p>
 <p>Linux:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/solidkosmos/sk-raft-client.git</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> venv .venv</span>
@@ -596,11 +608,14 @@ virtual environment without activation:
 <li><p>Extract the prebuilt design files:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> sk-raft-client/get_started/hw/design_examples</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./unzip_designs.sh</span>        <span class="co"># unzip_designs.bat on Windows</span></span></code></pre></div></li>
-<li><p>Find the serial number of your board:</p>
+<li><p>Check that the server sees your board:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> sk-raft-client/get_started</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> list_devices.py</span></code></pre></div></li>
-<li><p>Set <code>SERIAL_NUMBER</code> and <code>BOARD</code> at the top
-of <code>example1/src/main.py</code>, then run it:</p>
+<li><p>Set <code>BOARD</code> at the top of
+<code>example1/src/main.py</code>, and <code>SK_RAFT_SERVER_IP</code> if
+the server runs on another computer. The script attaches to the first
+board that the server lists, so connect only the target board. Then run
+the script:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> example1/src</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> main.py</span></code></pre></div></li>
 </ol>
