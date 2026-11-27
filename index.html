@@ -126,6 +126,9 @@ started examples</a>
 <li><a href="#examples" id="toc-examples">Examples</a></li>
 <li><a href="#requirements" id="toc-requirements">Requirements</a></li>
 <li><a href="#run-your-first-example" id="toc-run-your-first-example">Run your first example</a></li>
+<li><a href="#application-examples" id="toc-application-examples">Application examples</a></li>
+<li><a href="#real-campaigns" id="toc-real-campaigns">Real
+campaigns</a></li>
 <li><a href="#sk-raft-cheat-sheet" id="toc-sk-raft-cheat-sheet">SK-RAFT
 cheat sheet</a></li>
 </ul></li>
@@ -630,6 +633,77 @@ the script:</p>
 examples in any order. For other boards, the build of the designs and
 the full instructions, refer to the <a href="https://github.com/solidkosmos/sk-raft-client/blob/main/get_started/README.md"><code>get_started</code>
 README</a>.</p>
+<h2 id="application-examples">Application examples</h2>
+<p>Each folder in <a href="https://github.com/solidkosmos/sk-raft-client/tree/main/application_examples"><code>application_examples</code></a>
+of the sk-raft-client repository shows one use case of SK-RAFT. Its
+README tells how to build and run it.</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/application_examples/readback_scrubbing"><code>readback_scrubbing</code></a></td>
+<td>Use it to correct CRAM upsets from the test computer in radiation
+experiments, with no internal scrubber (e.g. SEM IP or ICAP logic) in
+the design. The script logs the frame, word and bit of each upset. You
+can change it, for example to check only the frames of one pblock.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/application_examples/sem_design_test"><code>sem_design_test</code></a></td>
+<td>Use it to check a design with the SEM IP before a radiation test:
+inject known upsets while the SEM is idle, and check that the SEM
+detects, corrects and reports each one at the right frame address.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/application_examples/tls_program"><code>tls_program</code></a></td>
+<td>Use it when the SK-RAFT server is on a network that other people
+also use, for example at a radiation facility. TLS encrypts the
+connection, and the server accepts only the clients whose public keys
+you gave it.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/application_examples/xadc_alarm"><code>xadc_alarm</code></a></td>
+<td>Use it to set the temperature alarm of the FPGA from the test script
+and read its state, with no XADC in the design. For example, set an
+upper limit, and stop a campaign or a beam run when the alarm goes on.
+The XADC checks the temperature all the time, so the script only has to
+read the alarm state.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/application_examples/xadc_monitor"><code>xadc_monitor</code></a></td>
+<td>Use it to record and monitor the die temperature and the supply
+voltages of the FPGA during a campaign or a beam run, with no XADC in
+the design and no extra wiring, either for safety or logging. The
+minimum and maximum values show the extremes between two reads.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="real-campaigns">Real campaigns</h2>
+<p>Each folder in <a href="https://github.com/solidkosmos/sk-raft-client/tree/main/real_campaigns"><code>real_campaigns</code></a>
+of the sk-raft-client repository has a complete fault-injection
+campaign. Its README tells how to build and run it.</p>
+<table>
+<thead>
+<tr>
+<th>Campaign</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/solidkosmos/sk-raft-client/tree/main/real_campaigns/test_neo_hardened"><code>test_neo_hardened</code></a></td>
+<td>Use it to measure what a hardening technique gives you: build the
+same design with and without the hardening (<code>HARDEN_EN</code>), run
+the same campaign on both, and compare the failures and the corrections.
+Use its test harness (clock control, reset and status over BSCAN) as a
+template for your own processor or SoC.</td>
+</tr>
+</tbody>
+</table>
 <div id="GET_STARTED_EXAMPLES-cheatsheet" class="page">
 
 </div>
